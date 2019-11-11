@@ -16,7 +16,13 @@ const EYE_MAX_CRAZY = 3;
 
 const EYE_PATH = 'assets/img/sprites/hud/oeil_icone_';
 
-const SLEEPING_SPEED = 0.004;
+const SLEEPING_SPEED = 0.005;
+const SLEEPING_LENGTH = 0.6 * 1000;
+const NIGHT = {
+    START: 0,
+    MIDDLE: 1,
+    END: 2
+};
 
 export default class Indicators {
     game;
@@ -32,6 +38,7 @@ export default class Indicators {
     sleepOverlay;
     goingToBed;
     transitionning;
+    trueBlackTimer;
 
     continueGame;
 
@@ -42,8 +49,9 @@ export default class Indicators {
         this.sleepOverlay.setDisplayOrigin(0, 0);
         this.sleepOverlay.setDepth(2000);
         this.sleepOverlay.setAlpha(0);
+        this.trueBlackTimer = 0;
 
-        this.goingToBed = false;
+        this.goingToBed = NIGHT.END;
         this.transitionning = false;
         this.continueGame = true;
 
@@ -161,53 +169,43 @@ export default class Indicators {
 
     nightTime(continueGame) {
         this.transitionning = true;
-        this.goingToBed = true;
+        this.goingToBed = NIGHT.START;
         this.continueGame = continueGame;
     }
-
+    
     update(time, delta) {
         if (this.transitionning) {
             let alpha = this.sleepOverlay.alpha;
-            if (this.goingToBed) {
-                this.sleepOverlay.setAlpha(alpha + (delta * SLEEPING_SPEED));
-                if (this.sleepOverlay.alpha >= 1) {
-                    this.sleepOverlay.alpha = 1;
-                    this.goingToBed = false;
-                }
-            } else {
-                if (!this.continueGame) {
-                    this.transitionning = false;
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    console.error('GAME OVER')
-                    this.game.scene.start('OverScene');
-                }
-                this.sleepOverlay.setAlpha(alpha - (delta * SLEEPING_SPEED));
-                if (this.sleepOverlay.alpha <= 0) {
-                    this.sleepOverlay.alpha = 0;
-                    this.transitionning = false;
-                }
-            } 
-        } else {
-            this.sleepOverlay.setAlpha(0);
+            switch (this.goingToBed) {
+                case NIGHT.START:
+                    this.sleepOverlay.setAlpha(alpha + (delta * SLEEPING_SPEED));
+                    if (this.sleepOverlay.alpha >= 1) {
+                        this.sleepOverlay.alpha = 1;
+                        this.trueBlackTimer = 0;
+                        this.goingToBed = NIGHT.MIDDLE;
+                    }
+                    break;
+                case NIGHT.MIDDLE:
+                    this.trueBlackTimer += delta;
+                    if (this.trueBlackTimer >= SLEEPING_LENGTH) {
+                        this.goingToBed = NIGHT.END;
+                    }
+                    break;
+                case NIGHT.END:
+                    if (!this.continueGame) {
+                        this.transitionning = false;
+                        this.game.scene.start('OverScene');
+                    }
+                    this.sleepOverlay.setAlpha(alpha - (delta * SLEEPING_SPEED));
+                    if (this.sleepOverlay.alpha <= 0) {
+                        this.sleepOverlay.setAlpha(0);
+                        this.transitionning = false;
+                    }
+                    break;
+                default:
+                    this.sleepOverlay.setAlpha(0);
+                    break;
+            }
         }
     }
-
 }
