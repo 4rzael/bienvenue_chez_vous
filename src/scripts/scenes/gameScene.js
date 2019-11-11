@@ -130,10 +130,6 @@ export default class GameScene extends Phaser.Scene {
         this.player.create();
         this.musicPlayer = new MusicPlayer(this)
 
-        this.house._upgradeLvL1()
-        this.house._upgradeLvL2()
-        this.house._upgradeLvL3()
-
         this.input.on('pointerdown', event => {
             console.log(event.position)
             UIConfig.sceneGrid.pixelToTile(event.position.x, event.position.y, 13, 8)
