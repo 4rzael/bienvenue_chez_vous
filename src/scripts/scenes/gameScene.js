@@ -120,12 +120,12 @@ export default class GameScene extends Phaser.Scene {
     }
     
     create() {
-        this.debugGrid = this.add.grid(
-            UIConfig.sceneGrid.positionCenter[0],
-            UIConfig.sceneGrid.positionCenter[1],
-            UIConfig.sceneGrid.size(13, 8)[0], UIConfig.sceneGrid.size(13, 8)[1],
-            UIConfig.sceneGrid.tileSize, UIConfig.sceneGrid.tileSize,
-            0xcacaca, 1, 0x0000FF);
+        // this.debugGrid = this.add.grid(
+        //     UIConfig.sceneGrid.positionCenter[0],
+        //     UIConfig.sceneGrid.positionCenter[1],
+        //     UIConfig.sceneGrid.size(13, 8)[0], UIConfig.sceneGrid.size(13, 8)[1],
+        //     UIConfig.sceneGrid.tileSize, UIConfig.sceneGrid.tileSize,
+        //     0xcacaca, 1, 0x0000FF);
 
         this.player.create();
         this.musicPlayer = new MusicPlayer(this)
