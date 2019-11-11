@@ -25,11 +25,13 @@ export default class NotesInventory {
     detailedNoteSprite;
     unFocus;
     isBookUnlocked;
+    stackedDetails;
 
     constructor(_game) {
         this.game = _game;
         this.noteLevel = 0;
         this.noteSprites = [];
+        this.stackedDetails = [];
         this.detailedNoteSprite = undefined;
         this.isBookUnlocked = false;
         this.halfDispenser = 0
@@ -46,14 +48,21 @@ export default class NotesInventory {
         this.overlay.setDepth(OVERLAY_DEPTH);
         this.overlay.setInteractive();
         let that = this;
+        this.overlay.setVisible(false);
         this.unFocus = () => {
-            that.overlay.setVisible(false);
             if (that.detailedNoteSprite !== undefined) {
                 that.detailedNoteSprite.destroy();
+
+                let upNext = that.stackedDetails.shift();
+                if (upNext !== undefined) {
+                    upNext.setVisible(true);
+                    that.detailedNoteSprite = upNext;
+                } else {
+                    that.overlay.setVisible(false);
+                    that.detailedNoteSprite = undefined;
+                }
             }
-            that.detailedNoteSprite = undefined;
         };
-        this.unFocus();
         this.overlay.on('pointerdown', this.unFocus);
 
         for (let i = 0; i < NOTES_AMMOUNT; i++) {
@@ -64,7 +73,6 @@ export default class NotesInventory {
         this.game.load.image('book_icon', 'assets/img/sprites/notes/icone_livreok.png');
         this.game.load.image('book_details', 'assets/img/sprites/notes/livre_demon.png');
 
-        // TODO: load book sprite
     }
 
     halfDispense () {
@@ -103,9 +111,12 @@ export default class NotesInventory {
 
     enlargeNote(chosen) {
         if (this.detailedNoteSprite !== undefined) {
-            return;
+            this.detailedNoteSprite.setVisible(false);
+            this.stackedDetails.push(this.detailedNoteSprite);
+        } else {
+            this.overlay.setVisible(true);
         }
-        this.overlay.setVisible(true);
+
         this.detailedNoteSprite = this.game.add.sprite(
             VIEW_WIDTH / 2, VIEW_HEIGHT / 2,
             `note_${chosen}_details`
@@ -117,7 +128,12 @@ export default class NotesInventory {
 
     openBook(that) {
         return () => {
-            that.overlay.setVisible(true);
+            if (that.detailedNoteSprite !== undefined) {
+                that.detailedNoteSprite.setVisible(false);
+                that.stackedDetails.push(that.detailedNoteSprite);
+            } else {
+                that.overlay.setVisible(true);
+            }
             that.detailedNoteSprite = that.game.add.sprite(
                 VIEW_WIDTH / 2, VIEW_HEIGHT / 2,
                 'book_details'
