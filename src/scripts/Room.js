@@ -52,11 +52,10 @@ export default class Room {
 
     _applyFurnituresMutations() {
         this.getAllMisplacedFurnitures()
-            .filter(_ => Math.random() <= Furniture.mutationProbability())
-            .forEach(name => {
-                console.log('Worsening furniture', name)
-                this.allFurnitures[name].worsen()
-            })
+        .forEach(name => {
+            console.log('Worsening furniture', name)
+            this.allFurnitures[name].worsen()
+        })
 
         this.getAllCorrectFurnitures()
         .forEach(name => {
@@ -79,13 +78,16 @@ export default class Room {
         this._applyFurnituresMutations()
         const theoreticalNbFurnitures = this.walls
             .map(wall => Object.keys(wall.correctFurniturePositions).length)
-            .reduce((a, b) => a + b, [])
+            .reduce((a, b) => a + b, 0)
 
         const errors = this.getAllMisplacedFurnitures().length + this.getAllMissingFurnitures().length
         const worsenProbability = errors / theoreticalNbFurnitures * 0.5
         if (Math.random() <= worsenProbability) {
             this.worsen()
         }
+        console.log('Mutating room.')
+        console.log(`There shoud be ${theoreticalNbFurnitures} furnitures`)
+        console.log(`There are be ${this.getAllCorrectFurnitures().length} correct furnitures`)
         if (Object.keys(this.getAllCorrectFurnitures()).length >= theoreticalNbFurnitures) {
             this.improve()
         }
@@ -107,11 +109,15 @@ export default class Room {
     }
 
     improve() {
-        return; // TODO non
         const phase = this.phase
         Room.validatePhaseName(this.phase)
-        this.phase = Room.phases()[Room.phases().indexOf(this.phase) + 1]
-        if (!this.phase) this.phase = phase
+        if (phase === 'neutral') {
+            this.phase = 'good';
+        } else if (phase === 'bad') {
+            this.phase = 'neutral';
+        }
+        console.log('phase is now', this.phase);
+        //if (!this.phase) this.phase = phase
     }
 
 
