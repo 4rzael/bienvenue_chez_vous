@@ -253,6 +253,7 @@ export default class Wall {
     }
 
     exit() {
+        console.log('blabalaa', this.getPresentFurniturePositions())
         if (this.backgroundSprite) {
             this.backgroundSprite.destroy()
             this.backgroundSprite = undefined

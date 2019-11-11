@@ -13,7 +13,7 @@ export default class Player {
         this.house = house
         this.house.setPlayer(this)
         this.mentalHealth = 100
-        this.energyPerDay = 15
+        this.energyPerDay = 10
         this.energy = this.energyPerDay
         this.energyUsedByWalking = 0.5
         this.energyUsedByPlacing = 1
@@ -33,6 +33,7 @@ export default class Player {
             if (this.currentlyDragging) {
                 const wall = this.house.getRoom(this.currentRoom).walls[this.currentWall]
                 const tilePos = UIConfig.sceneGrid.pixelToTile(pointer.x, pointer.y, wall.sizeX, wall.sizeY)
+                console.log(tilePos)
                 let clampedTilePos = [...tilePos]
                 if (clampedTilePos[0] < 0) clampedTilePos[0] = 0
                 if (clampedTilePos[1] < 0) clampedTilePos[1] = 0

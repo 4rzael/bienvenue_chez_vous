@@ -54,7 +54,7 @@ export default class GameScene extends Phaser.Scene {
         const baseFurnitureName = path + '/furnitures/' + baseFilename
         const baseInventoryName = path + '/inventory/' + baseFilename
         return {
-            good: baseFurnitureName + '_neutral.png',
+            good: baseFurnitureName + '_good.png',
             neutral: baseFurnitureName + '_neutral.png',
             bad: baseFurnitureName + '_bad.png',
             inventory: baseInventoryName + '_neutral.png'
@@ -62,29 +62,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.addfurniture({
-            name: 'tabourey',
-            sizeX: 1, sizeY: 1,
-            placeableOnWall: false,
-            images: {
-                neutral: 'assets/img/sprites/skorjund.png',
-                good: 'assets/img/sprites/skorjund.png',
-                bad: 'assets/img/sprites/skorjund.png',
-                inventory: 'assets/img/sprites/skorjund.png'
-            }
-        });
-        this.addfurniture({
-            name: 'fatbourey',
-            sizeX: 2, sizeY: 2,
-            placeableOnWall: true,
-            images: {
-                neutral: 'assets/img/sprites/skorjund_fat.png',
-                good: 'assets/img/sprites/skorjund_fat.png',
-                bad: 'assets/img/sprites/skorjund_fat.png',
-                inventory: 'assets/img/sprites/skorjund.png'
-            }
-        });
-
         const furnituresData = {
             bibliotheque_bibliotheque: {sizeX: 5, sizeY: 6, placeableOnWall: false},
             bibliotheque_bureau: {sizeX: 4, sizeY: 3, placeableOnWall: false},
@@ -143,8 +120,19 @@ export default class GameScene extends Phaser.Scene {
     }
     
     create() {
+        this.debugGrid = this.add.grid(
+            UIConfig.sceneGrid.positionCenter[0],
+            UIConfig.sceneGrid.positionCenter[1],
+            UIConfig.sceneGrid.size(13, 8)[0], UIConfig.sceneGrid.size(13, 8)[1],
+            UIConfig.sceneGrid.tileSize, UIConfig.sceneGrid.tileSize,
+            0xcacaca, 1, 0x0000FF);
+
         this.player.create();
         this.musicPlayer = new MusicPlayer(this)
+
+        this.house._upgradeLvL1()
+        this.house._upgradeLvL2()
+        this.house._upgradeLvL3()
 
         this.input.on('pointerdown', event => {
             console.log(event.position)
@@ -155,6 +143,4 @@ export default class GameScene extends Phaser.Scene {
     update(time, delta) {
         this.player.update(time, delta);
     }
-
-
 }
